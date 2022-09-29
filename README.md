@@ -1,8 +1,9 @@
 # Laboratório de Engenharia de Software
-Repositório para os projetos da disciplina de Laboratório de Engenharia de Software 1.
+Repositório para o projeto 1 da disciplina de Laboratório de Engenharia de Software 1.
+Tema:  Criação de Mocks no Jest (Teste de Unidade)
 
 ## Autores:
-- [Ana Julia Velasque](https://github.com/anajvelasque);
-- [Lucas Cota](https://github.com/lucascdornelas);
-- [Pedro Vaz](https://github.com/vazConnected/);
-- [Rafael Augusto](https://github.com/RafaelAugustoo).
+- [Ana Julia Velasque Rodrigues](https://github.com/anajvelasque) - 20193020425;
+- [Lucas Cota Dornelas](https://github.com/lucascdornelas) - 20193018294;
+- [Pedro Henrique Vaz](https://github.com/vazConnected/) - 20193025047;
+- [Rafael Augusto de Souza](https://github.com/RafaelAugustoo) - 20193025261;
