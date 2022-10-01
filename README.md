@@ -26,8 +26,8 @@ npm: npm install --save-dev jest
 ## Criando testes unitários no Jest
 
 ## Referências:
-[Teste unitário com Jest](https://www.devmedia.com.br/teste-unitario-com-jest/41234);
-[TDD: Como criar mocks em Node.js com Jest](https://www.luiztools.com.br/post/tdd-como-criar-mocks-em-node-js-com-jest/);
+- [Teste unitário com Jest](https://www.devmedia.com.br/teste-unitario-com-jest/41234);
+- [TDD: Como criar mocks em Node.js com Jest](https://www.luiztools.com.br/post/tdd-como-criar-mocks-em-node-js-com-jest/);
 
 ## Autores:
 - [Ana Julia Velasque Rodrigues](https://github.com/anajvelasque) - 20193020425;
