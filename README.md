@@ -10,19 +10,25 @@ Mocking ou “imitação”, em uma tradução literal, é a técnica de criar i
 ## Instalando o Jest:
 Para instalar o Jest utilizando o yarn/npm basta rodar o seguinte comando dentro da pasta do seu projeto:
 
-yarn: yarn add --dev jest
+yarn:
+```yarn add --dev jest```
 
-npm: npm install --save-dev jest
+npm: 
+```npm install --save-dev jest```
 
 ## Configuração:
 É necessário adicionar ao documento package.json o seguinte trecho de código:
-
+```
 {
-      "scripts": {
+
+     "scripts": {
+     
         "test": "jest"
+        
       }
+      
     }
-    
+```
 ## Criando testes unitários no Jest
 
 ## Referências:
