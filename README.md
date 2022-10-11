@@ -22,6 +22,110 @@ Para instalar o Jest utilizando o yarn/npm basta rodar o seguinte comando dentro
 }
 ```
 ## Criando testes unitários no Jest
+Primeiro vamos criar um arquivo chamado ```descontos.js``` e dentro dele uma função ```freteGratis```:
+
+```
+function freteGratis (valor) {
+  return valor >= 150
+}
+```
+Para testá-lo vamos criar o arquivo descontos.test.js, dentro desse arquivo iremos chamar a função test que será reconhecida pelo Jest como um teste efetivamente, como segundo argumento de test passamos uma função anônima sem argumentos, e nessa função executamos a função expect, e é essa função que irá verificar o resultado do código sendo testado:
+
+```
+const freteGratis = require('./descontos').freteGratis()
+
+test('freteGratis é verdadeiro para 200', () => {
+  expect(freteGratis(200)).toBeTruthy()
+})
+```
+
+Em seguida rodamos o seguinte comando no terminal para executar o teste:
+
+``` 
+npm test
+```
+Ou então:
+```
+yarn test
+```
+
+Na linha de comando o Jest irá notificar se o teste passou ou se falhou.
+```
+"descontos"
+
+ PASS  test/descontos.test.js
+  OK freteGratis é verdadeiro para 200 (5ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        3.814s
+Ran all test suites matching /descontos/i.
+```
+### Matchers
+Jest utiliza de "matchers" para realizar os testes efetivamente. Existem diversos matchers para cada situação em particular dentro do contexto de testes. Os matchers são implementados a partir da chamada de expect() seguinte a sintaxe:
+
+```
+test('descrição do teste', () => {
+    expect("valor esperado").toMatch("código testado");
+});
+```
+### Exemplo de Matcher: Igualdade
+A função .toBe(valor) testa se o valor passado é idêntico ao esperado em valor e tipo .
+```
+test("resultados devem ser iguais",
+    () => {
+        let moeda = pais.findMoedaById(1)
+        expect(moeda.pais).toBe('Dolar')
+})
+```
+
+Para cada matcher de comparação é possível usar o .not para fazer uma comparação oposta.
+```
+test("resultados devem ser iguais",
+    () => {
+        let moeda = pais.findMoedaById(1)
+        expect(moeda.pais).not.toEqual({cotacao: 5.15, pais: 'EUA', moeda: 'Dolar'})
+})
+```
+## Funções de Mock
+Vamos supor que temos a seguinte função no nosso código:
+```
+function pagamentoMoedaEstrangeira (tipoMoeda, valor, currency) {
+  if (tipoMoeda === Currency.QUOTACAO_DOLAR) {
+    valor *= currency.getQuotacaoDolar()
+  } else if (tipoMoeda === Currency.QUOTACAO_EURO) {
+    valor *= currency.getQuotacaoEuro()
+  } else if (tipoMoeda === Currency.QUOTACAO_LIBRA) {
+    valor *= currency.getQuotacaoLibra()
+  } else {
+    throw Error('moeda não disponível')
+  }
+  return valor
+}
+
+module.exports = { pagamentoMoedaEstrangeira }
+```
+Conseguimos simular uma dependência do código sob teste sem aumentar muito a complexidade do código de teste:
+```
+const { pagamentoMoedaEstrangeira } = require('../src/operacoes.js')
+
+const mockCurrency = {}
+mockCurrency.getQuotacaoDolar = jest.fn()
+mockCurrency.getQuotacaoDolar.mockReturnValue(3)
+
+test('chamar getQuotacaoDolar uma vez', () => {
+  expect(pagamentoMoedaEstrangeira('dolar', 300, mockCurrency)).toBe(900)
+})
+```
+
+- Linha 3: Criamos o objeto que irá portar a função mock a ser criada.
+- Linha 4: É criada efetivamente a função mock que ira ser usada dentro do teste.
+- Linha 5: Definido o valor de retorno que a função getQuotacaoDolar irá retornar quando for chamada, no caso 3
+
+
+## Agora é a sua vez!
+Para treinar crie uma função mock para o teste da função ```freteGratis```.
 
 ## Referências:
 - [Teste unitário com Jest](https://www.devmedia.com.br/teste-unitario-com-jest/41234);
