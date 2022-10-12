@@ -89,6 +89,11 @@ test("resultados devem ser iguais",
 })
 ```
 ## Funções de Mock
+
+As Funções de mock permitem criar módulos e funções falsas utilizadas para simular uma dependência. Elas facilitam testar as ligações no código por substituir uma dependência cuja implementação seria inviável dentro do teste. Ao criar o mock de uma função, torna-se possível capturar chamadas dessa função (e seus parâmetros) pelo código que está sendo testado, permite capturar instâncias de funções construtoras quando implementadas usando new e também permitem a configuração dos valores retornados para o código sob teste.
+
+Funções mock são criadas a partir da função ```jest.fn()``` e podem ser configuradas para reproduzir o comportamento desejado.
+
 Vamos supor que temos a seguinte função no nosso código:
 ```
 function pagamentoMoedaEstrangeira (tipoMoeda, valor, currency) {
