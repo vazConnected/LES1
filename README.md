@@ -25,18 +25,33 @@ Para instalar o Jest utilizando o yarn/npm basta rodar o seguinte comando dentro
 Primeiro vamos criar um arquivo chamado ```descontos.js``` e dentro dele uma função ```freteGratis```:
 
 ``` javascript
-function freteGratis (valor) {
-  return valor >= 150;
+function shouldFreeShipping(valuePurchase) {
+  return valuePurchase > 150;
 }
 ```
 Para testá-lo vamos criar o arquivo descontos.test.js, dentro desse arquivo iremos chamar a função test que será reconhecida pelo Jest como um teste efetivamente, como segundo argumento de test passamos uma função anônima sem argumentos, e nessa função executamos a função expect, e é essa função que irá verificar o resultado do código sendo testado:
 
 ``` javascript
-const freteGratis = require('./descontos').freteGratis();
+const { shouldFreeShipping } = require('../../src/services/shipping');
 
-test('freteGratis é verdadeiro para 200', () => {
-  expect(freteGratis(200)).toBeTruthy();
-})
+describe('shouldFreeShipping', () => {
+  it('should apply free shipping for value 200', () => {
+    const valuePurchase = 200;
+
+    const result = shouldFreeShipping(valuePurchase);
+
+    expect(result).toBe(true);
+  });
+
+  it('should not apply free shipping for value 100', () => {
+    const valuePurchase = 100;
+
+    const result = shouldFreeShipping(valuePurchase);
+
+    expect(result).toBe(false);
+  });
+});
+
 ```
 
 Em seguida rodamos o seguinte comando no terminal para executar o teste:
@@ -51,16 +66,15 @@ yarn test
 
 Na linha de comando o Jest irá notificar se o teste passou ou se falhou.
 ```
-"descontos"
-
- PASS  test/descontos.test.js
-  OK freteGratis é verdadeiro para 200 (5ms)
+ PASS  __test__/services/shipping.test.js
+  shouldFreeShipping
+    ✓ should apply free shipping for value 200 (1 ms)
+    ✓ should not apply free shipping for value 100 (1 ms)
 
 Test Suites: 1 passed, 1 total
-Tests:       1 passed, 1 total
+Tests:       2 passed, 2 total
 Snapshots:   0 total
-Time:        3.814s
-Ran all test suites matching /descontos/i.
+Time:        0.282 s, estimated 1 s
 ```
 ### Matchers
 Jest utiliza de "matchers" para realizar os testes efetivamente. Existem diversos matchers para cada situação em particular dentro do contexto de testes. Os matchers são implementados a partir da chamada de expect() seguinte a sintaxe:
@@ -96,41 +110,137 @@ Funções mock são criadas a partir da função ```jest.fn()``` e podem ser con
 
 Vamos supor que temos a seguinte função no nosso código:
 ``` javascript
-function pagamentoMoedaEstrangeira (tipoMoeda, valor, currency) {
-  if (tipoMoeda === Currency.QUOTACAO_DOLAR) {
-    valor *= currency.getQuotacaoDolar();
-  } else if (tipoMoeda === Currency.QUOTACAO_EURO) {
-    valor *= currency.getQuotacaoEuro();
-  } else if (tipoMoeda === Currency.QUOTACAO_LIBRA) {
-    valor *= currency.getQuotacaoLibra();
-  } else {
-    throw Error('moeda não disponível');
+const CoinsTypes = {
+  real: 'real',
+  dollar: 'dollar',
+  euro: 'euro',
+  pound: 'pound',
+};
+
+function convertCurrencyInReal(value, coin, exchangeServiceReal) {
+  let amount = value;
+
+  switch (coin) {
+    case CoinsTypes.real:
+      amount *= 1;
+      break;
+    case CoinsTypes.dollar:
+      amount *= exchangeServiceReal.getValueOfDollar();
+      break;
+    case CoinsTypes.euro:
+      amount *= exchangeServiceReal.getValueOfEuro();
+      break;
+    case CoinsTypes.pound:
+      amount *= exchangeServiceReal.getValueOfPound();
+      break;
+
+    default:
+      break;
   }
-  return valor;
+
+  return amount;
 }
 
-module.exports = { pagamentoMoedaEstrangeira }
+module.exports = { convertCurrencyInReal, CoinsTypes };
 ```
 Conseguimos simular uma dependência do código sob teste sem aumentar muito a complexidade do código de teste:
 ``` javascript
-const { pagamentoMoedaEstrangeira } = require('../src/operacoes.js');
+const {
+  CoinsTypes,
+  convertCurrencyInReal,
+} = require('../../src/services/payment');
 
-const mockCurrency = {};
-mockCurrency.getQuotacaoDolar = jest.fn();
-mockCurrency.getQuotacaoDolar.mockReturnValue(3);
+const _dollarValue = 5.21;
+const _euroValue = 5.08;
+const _poundValue = 5.81;
 
-test('chamar getQuotacaoDolar uma vez', () => {
-  expect(pagamentoMoedaEstrangeira('dolar', 300, mockCurrency)).toBe(900);
-})
+// todo: complete service mock with values of coins
+const mockExchangeServiceReal = {};
+
+describe('convertCurrencyInReal', () => {
+  it('should get value in currency Real from real value', () => {
+    const valueInReal = 100;
+
+    const result = convertCurrencyInReal(
+      valueInReal,
+      CoinsTypes.real,
+      mockExchangeServiceReal
+    );
+
+    expect(result).toBe(valueInReal);
+  });
+
+  it('should get value in currency Real from Dollar value', () => {
+    const valueInDollar = 100;
+
+    const result = convertCurrencyInReal(
+      valueInDollar,
+      CoinsTypes.dollar,
+      mockExchangeServiceReal
+    );
+
+    expect(mockExchangeServiceReal.getValueOfDollar).toBeCalled();
+
+    expect(result).toBe(valueInDollar * _dollarValue);
+  });
+
+  it('should get value in currency Real from Euro value', () => {
+    const valueInEuro = 100;
+
+    const result = convertCurrencyInReal(
+      valueInEuro,
+      CoinsTypes.euro,
+      mockExchangeServiceReal
+    );
+
+    expect(mockExchangeServiceReal.getValueOfEuro).toBeCalled();
+
+    expect(result).toBe(valueInEuro * _euroValue);
+  });
+  it('should get value in currency Real from pound value', () => {
+    const valueInPound = 100;
+
+    const result = convertCurrencyInReal(
+      valueInPound,
+      CoinsTypes.pound,
+      mockExchangeServiceReal
+    );
+
+    expect(mockExchangeServiceReal.getValueOfPound).toBeCalled();
+
+    expect(result).toBe(valueInPound * _poundValue);
+  });
+});
+
 ```
 
-- Linha 3: Criamos o objeto que irá portar a função mock a ser criada.
-- Linha 4: É criada efetivamente a função mock que ira ser usada dentro do teste.
-- Linha 5: Definido o valor de retorno que a função getQuotacaoDolar irá retornar quando for chamada, no caso 3
+- Linha 11: Criamos o objeto que irá portar a função mock a ser criada.
 
 
 ## Agora é a sua vez!
-Para treinar crie uma função mock para o teste da função ```freteGratis```.
+Para treinar, o seu objetivo é criar o mock ```mockExchangeServiceReal``` para que o teste da função ```convertCurrencyInReal``` rode corretamente. 
+
+**Obs. 1**: As funções do mock deve retornar os valores corretos das moedas.
+> Dica 1: Ao criar uma função mock é possivel definir um valor retornado pela função com o método ```mockReturnValue```.
+
+No momento os testes da função esta falhando:
+```
+Test Suites: 1 failed, 1 passed, 2 total
+Tests:       3 failed, 3 passed, 6 total
+Snapshots:   0 total
+Time:        0.537 s, estimated 1 s
+```
+
+Quando o mock estiver correto todos os testes ira passar: 
+```
+ PASS  __test__/services/payment.test.js
+ PASS  __test__/services/shipping.test.js
+
+Test Suites: 2 passed, 2 total
+Tests:       6 passed, 6 total
+Snapshots:   0 total
+Time:        0.519 s, estimated 1 s
+```
 
 ## Referências:
 - [Teste unitário com Jest](https://www.devmedia.com.br/teste-unitario-com-jest/41234);

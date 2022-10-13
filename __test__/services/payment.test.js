@@ -7,15 +7,8 @@ const _dollarValue = 5.21;
 const _euroValue = 5.08;
 const _poundValue = 5.81;
 
-// const mockExchangeServiceReal = {
-//   getValueOfDollar: jest.fn(),
-//   getValueOfEuro: jest.fn(),
-//   getValueOfPound: jest.fn(),
-// };
-
-// mockExchangeServiceReal.getValueOfDollar.mockReturnValue(_dollarValue);
-// mockExchangeServiceReal.getValueOfEuro.mockReturnValue(_euroValue);
-// mockExchangeServiceReal.getValueOfPound.mockReturnValue(_poundValue);
+// todo: complete service mock with values of coins
+const mockExchangeServiceReal = {};
 
 describe('convertCurrencyInReal', () => {
   it('should get value in currency Real from real value', () => {
