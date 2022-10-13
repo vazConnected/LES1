@@ -16,26 +16,26 @@ Para instalar o Jest utilizando o yarn/npm basta rodar o seguinte comando dentro
 É necessário adicionar ao documento package.json o seguinte trecho de código:
 ``` javascript
 {
-     "scripts": {
-          "test": "jest"
-      }
+  "scripts": {
+    "test": "jest"
+  }
 }
 ```
 ## Criando testes unitários no Jest
 Primeiro vamos criar um arquivo chamado ```descontos.js``` e dentro dele uma função ```freteGratis```:
 
-```
+``` javascript
 function freteGratis (valor) {
-  return valor >= 150
+  return valor >= 150;
 }
 ```
 Para testá-lo vamos criar o arquivo descontos.test.js, dentro desse arquivo iremos chamar a função test que será reconhecida pelo Jest como um teste efetivamente, como segundo argumento de test passamos uma função anônima sem argumentos, e nessa função executamos a função expect, e é essa função que irá verificar o resultado do código sendo testado:
 
-```
-const freteGratis = require('./descontos').freteGratis()
+``` javascript
+const freteGratis = require('./descontos').freteGratis();
 
 test('freteGratis é verdadeiro para 200', () => {
-  expect(freteGratis(200)).toBeTruthy()
+  expect(freteGratis(200)).toBeTruthy();
 })
 ```
 
@@ -65,27 +65,27 @@ Ran all test suites matching /descontos/i.
 ### Matchers
 Jest utiliza de "matchers" para realizar os testes efetivamente. Existem diversos matchers para cada situação em particular dentro do contexto de testes. Os matchers são implementados a partir da chamada de expect() seguinte a sintaxe:
 
-```
+``` javascript
 test('descrição do teste', () => {
-    expect("valor esperado").toMatch("código testado");
+  expect("valor esperado").toMatch("código testado");
 });
 ```
 ### Exemplo de Matcher: Igualdade
 A função .toBe(valor) testa se o valor passado é idêntico ao esperado em valor e tipo .
-```
+``` javascript
 test("resultados devem ser iguais",
-    () => {
-        let moeda = pais.findMoedaById(1)
-        expect(moeda.pais).toBe('Dolar')
+  () => {
+    let moeda = pais.findMoedaById(1);
+    expect(moeda.pais).toBe('Dolar');
 })
 ```
 
 Para cada matcher de comparação é possível usar o .not para fazer uma comparação oposta.
-```
+``` javascript
 test("resultados devem ser iguais",
-    () => {
-        let moeda = pais.findMoedaById(1)
-        expect(moeda.pais).not.toEqual({cotacao: 5.15, pais: 'EUA', moeda: 'Dolar'})
+  () => {
+    let moeda = pais.findMoedaById(1);
+    expect(moeda.pais).not.toEqual({cotacao: 5.15, pais: 'EUA', moeda: 'Dolar'});
 })
 ```
 ## Funções de Mock
@@ -95,32 +95,32 @@ As Funções de mock permitem criar módulos e funções falsas utilizadas para 
 Funções mock são criadas a partir da função ```jest.fn()``` e podem ser configuradas para reproduzir o comportamento desejado.
 
 Vamos supor que temos a seguinte função no nosso código:
-```
+``` javascript
 function pagamentoMoedaEstrangeira (tipoMoeda, valor, currency) {
   if (tipoMoeda === Currency.QUOTACAO_DOLAR) {
-    valor *= currency.getQuotacaoDolar()
+    valor *= currency.getQuotacaoDolar();
   } else if (tipoMoeda === Currency.QUOTACAO_EURO) {
-    valor *= currency.getQuotacaoEuro()
+    valor *= currency.getQuotacaoEuro();
   } else if (tipoMoeda === Currency.QUOTACAO_LIBRA) {
-    valor *= currency.getQuotacaoLibra()
+    valor *= currency.getQuotacaoLibra();
   } else {
-    throw Error('moeda não disponível')
+    throw Error('moeda não disponível');
   }
-  return valor
+  return valor;
 }
 
 module.exports = { pagamentoMoedaEstrangeira }
 ```
 Conseguimos simular uma dependência do código sob teste sem aumentar muito a complexidade do código de teste:
-```
-const { pagamentoMoedaEstrangeira } = require('../src/operacoes.js')
+``` javascript
+const { pagamentoMoedaEstrangeira } = require('../src/operacoes.js');
 
-const mockCurrency = {}
-mockCurrency.getQuotacaoDolar = jest.fn()
-mockCurrency.getQuotacaoDolar.mockReturnValue(3)
+const mockCurrency = {};
+mockCurrency.getQuotacaoDolar = jest.fn();
+mockCurrency.getQuotacaoDolar.mockReturnValue(3);
 
 test('chamar getQuotacaoDolar uma vez', () => {
-  expect(pagamentoMoedaEstrangeira('dolar', 300, mockCurrency)).toBe(900)
+  expect(pagamentoMoedaEstrangeira('dolar', 300, mockCurrency)).toBe(900);
 })
 ```
 
